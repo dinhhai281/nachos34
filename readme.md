@@ -8,8 +8,6 @@
 #### If you need to ask me anything about this assignment [Inbox my facebook](https://www.facebook.com/hainguyen28197)
 
 ## What I have done
-#### Handle all SC syscall.h (catch exception only haven't write code for system process
-#### Done SC_Create (only copy code in demo)
-#### Write SC_PrintStr to print a string to console
+#### All project 1 tasks are done.
 
 ## If you are also in FIT and doing this assignment, good luck :)
