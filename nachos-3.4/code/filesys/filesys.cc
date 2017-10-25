@@ -51,6 +51,7 @@
 #include "filehdr.h"
 #include "filesys.h"
 
+
 // Sectors containing the file headers for the bitmap of free sectors,
 // and the directory of files.  These file headers are placed in well-known 
 // sectors, so that they can be located on boot-up.
@@ -140,7 +141,7 @@ FileSystem::FileSystem(bool format)
         freeMapFile = new OpenFile(FreeMapSector);
         directoryFile = new OpenFile(DirectorySector);
     }
-    //
+ 
 }
 
 //----------------------------------------------------------------------

@@ -19,6 +19,8 @@ Statistics *stats;			// performance metrics
 Timer *timer;				// the hardware timer device,
 					// for invoking context switches
 #define FILE_LIMIT 10
+#define STDIN       0
+#define STDOUT      1
 
 #ifdef FILESYS_NEEDED
 FileSystem  *fileSystem;
@@ -167,6 +169,13 @@ Initialize(int argc, char **argv)
         openFileList[i] = NULL;
     }
     fileTypeList = new int[FILE_LIMIT];
+    fileSystem->Create("stdin", 0);
+    openFileList[STDIN] = fileSystem->Open("stdin");
+    fileTypeList[STDIN] = 1;
+    fileSystem->Create("stdout", 0);
+    openFileList[STDOUT] = fileSystem->Open("stdout");
+    fileTypeList[STDOUT] = 0;
+   
     
 #endif
 

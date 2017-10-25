@@ -35,7 +35,7 @@ CPP = gcc -E
 INCDIR =-I../userprog -I../threads
 CFLAGS = -G 0 -c $(INCDIR)
 
-all: halt shell matmult sort createfile testprint openfile closefile
+all: halt shell matmult sort createfile testprint openfile closefile testgs readwrite
 
 start.o: start.s ../userprog/syscall.h
 	$(CPP) $(CPPFLAGS) start.c > strt.s
@@ -89,3 +89,15 @@ closefile.o: closefile.c
 closefile: closefile.o start.o
 	$(LD) $(LDFLAGS) start.o closefile.o -o closefile.coff
 	../bin/coff2noff closefile.coff closefile
+
+testgs.o: testgs.c
+	$(CC) $(CFLAGS) -c testgs.c
+testgs: testgs.o start.o
+	$(LD) $(LDFLAGS) start.o testgs.o -o testgs.coff
+	../bin/coff2noff testgs.coff testgs
+
+readwrite.o: readwrite.c
+	$(CC) $(CFLAGS) -c readwrite.c
+readwrite: readwrite.o start.o
+	$(LD) $(LDFLAGS) start.o readwrite.o -o readwrite.coff
+	../bin/coff2noff readwrite.coff readwrite

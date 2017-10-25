@@ -195,3 +195,7 @@ OpenFile::Length()
 { 
     return hdr->FileLength(); 
 }
+
+int OpenFile::CurrentPos() {
+    return seekPosition;
+}

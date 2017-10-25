@@ -65,6 +65,8 @@
 // Define
 #define MAX_FILE_LENGTH 32
 #define FILE_LIMIT 		10
+#define STDIN 			0
+#define STDOUT 			1
 
 // Tang program counter, code o trong file mipssim.cc
 void IncreasePC() {
@@ -75,7 +77,8 @@ void IncreasePC() {
 
 // -------------------------------------------------
 // File preprocess
-int fileIndex = 0;
+int fileIndex = 2; // 0: stdin, 1: stdout
+
 
 void ExceptionHandler(ExceptionType which) {
 	int type = machine->ReadRegister(2);
@@ -99,6 +102,7 @@ void ExceptionHandler(ExceptionType which) {
 					virtAddr = machine->ReadRegister(4);
 					str = machine->User2System(virtAddr, MAX_FILE_LENGTH + 1);
 					printf(str);
+					delete []str;
 					IncreasePC();
 					break;
 				}
@@ -153,8 +157,8 @@ void ExceptionHandler(ExceptionType which) {
 					int type;
 
 					// Kiem tra bo nho tim fileIndex
-					int i = 0;
-					while(openFileList[i] != NULL) {
+					int i = 2;
+					while(openFileList[i] != NULL & i<= FILE_LIMIT) {
 						i++;
 					}
 					if(i <= FILE_LIMIT) {
@@ -204,9 +208,8 @@ void ExceptionHandler(ExceptionType which) {
 				{
 					int id;
 					id = machine->ReadRegister(4);
-					printf("\n%d\n", id);
 					// Kiem tra id
-					if(idx > FILE_LIMIT) {
+					if(id > FILE_LIMIT || id < 0) {
 						printf("\n OpenFileID out of limit.");
 						IncreasePC();
 						machine->WriteRegister(2, -1);
@@ -222,6 +225,117 @@ void ExceptionHandler(ExceptionType which) {
 						machine->WriteRegister(2, -1);
 						return;
 					}
+				}
+				break;
+				case SC_Read:
+				{
+
+					int virtAddr; //dia chi chua noi dung se gi vao
+					int size; // so byte ghi vao file
+					int id; // OpenFileID
+					char* buffer; // bo dem chua noi dung
+
+					virtAddr = machine->ReadRegister(4);
+					size = machine->ReadRegister(5);
+					id = machine->ReadRegister(6);
+
+					// Kiem tra neu ghi vao console(STDOUT)
+					if(id == STDOUT) { // Khong the doc tu STDOUT
+						IncreasePC();
+						machine->WriteRegister(2, -1); 
+						return;
+					}
+						
+					if(id == STDIN)  { 
+						buffer = new char[size];
+						int num = gSynchConsole->Read(buffer, size);
+						// Chuyen ve vung nho user
+						machine->System2User(virtAddr, num, buffer);
+						delete []buffer;
+						IncreasePC();
+						machine->WriteRegister(2, num);
+						return;
+					}
+
+					if(id >= 2) { // File
+						if(openFileList[id] == NULL) { // File khong duoc mo
+							IncreasePC();
+							machine->WriteRegister(2, -1);
+							return;
+						}
+						// Bat dau doc file luu lai vi tri con tro trong file
+						int curPos = openFileList[id]->CurrentPos();
+						// Kiem tra da dem cuoi file chua
+						if(curPos == openFileList[id]->Length()) {
+							IncreasePC();
+							machine->WriteRegister(2, -2);
+							return;
+						} 
+						// Doc file
+						buffer = new char[size];
+						int num = openFileList[id]->Read(buffer, size);
+						// Chuyen tu vung nho he thong san user
+						machine->System2User(virtAddr, num, buffer);
+						IncreasePC();
+						machine->WriteRegister(2, num);
+						return;
+
+
+					}
+				}
+				break;
+				case SC_Write: // Write(char* buffer, int size, OpenFileID id)
+				{	
+					int virtAddr; //dia chi chua noi dung se gi vao
+					int size; // so byte ghi vao file
+					int id; // OpenFileID
+					char* buffer; // bo dem chua noi dung
+					// Doc cac gia tri tu thanh ghi
+					virtAddr = machine->ReadRegister(4);
+					size = machine->ReadRegister(5);
+					id = machine->ReadRegister(6);
+					// Kiem tra neu ghi vao console(STDOUT)
+					if(id == STDOUT) {
+						buffer = machine->User2System(virtAddr, size);
+						int num = gSynchConsole->Write(buffer, size);
+						IncreasePC();
+						machine->WriteRegister(2, num);
+						delete buffer;
+						return;
+					}
+					if(id == STDIN)  { // Khong the Write vao STDIN
+						IncreasePC();
+						machine->WriteRegister(2, -1); 
+						return;
+					}
+					if(id >= 2) {
+						//Kiem tra OpenFileID
+						if(openFileList[id] == NULL) {
+							printf("\nOpenFileID is not valid");
+							IncreasePC();
+							machine->WriteRegister(2, -1);
+							return;
+						} else if(fileTypeList[id] == 1) { // type = 1 -> file chi doc
+							printf("\nReadonly file");
+							IncreasePC();
+							machine->WriteRegister(2, -1);
+							return;
+						}
+						// Chuyen buffer vao vung nho he thong
+						buffer = machine->User2System(virtAddr, size);
+
+						
+
+						// Ghi vao file su dung OpenFile
+						int num = openFileList[id]->Write(buffer, size); // Tra ve so byte that su da ghi
+
+						IncreasePC();
+						machine->WriteRegister(2, num);
+						delete []buffer;
+						return;
+					}
+					
+
 				}
 				break;
 				//case Other:
