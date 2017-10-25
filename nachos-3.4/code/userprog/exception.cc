@@ -278,6 +278,7 @@ void ExceptionHandler(ExceptionType which) {
 						machine->System2User(virtAddr, num, buffer);
 						IncreasePC();
 						machine->WriteRegister(2, num);
+						delete buffer;
 						return;
 
 
@@ -323,11 +324,13 @@ void ExceptionHandler(ExceptionType which) {
 						}
 						// Chuyen buffer vao vung nho he thong
 						buffer = machine->User2System(virtAddr, size);
-
-						
+						int realSize = 0;
+						while(!(buffer[realSize] == 0 && buffer[realSize + 1] == 0) || realSize == size) {
+							realSize++;
+						}
 
 						// Ghi vao file su dung OpenFile
-						int num = openFileList[id]->Write(buffer, size); // Tra ve so byte that su da ghi
+						int num = openFileList[id]->Write(buffer, realSize); // Tra ve so byte that su da ghi
 
 						IncreasePC();
 						machine->WriteRegister(2, num);
