@@ -30,6 +30,7 @@
 #define SC_Fork		9
 #define SC_Yield	10
 #define SC_PrintStr 11
+#define SC_Seek		12
 
 #ifndef IN_ASM
 
@@ -128,7 +129,14 @@ void Yield();
 /*Print String to console
  *
  */	
- void PrintStr(char* string);	
+ void PrintStr(char* string);
+
+ /*	Seek to position in file
+  *
+  *
+  *
+  */
+ int Seek(int position, OpenFileId id);
 
 #endif /* IN_ASM */
 

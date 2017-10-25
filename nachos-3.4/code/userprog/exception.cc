@@ -338,6 +338,47 @@ void ExceptionHandler(ExceptionType which) {
 
 				}
 				break;
+				case SC_Seek:
+				{
+					int pos;
+					int id;
+
+					pos = machine->ReadRegister(4);	
+					id 	= machine->ReadRegister(5);
+					//Kiem tra file da duoc open hay chua
+					if(openFileList[id] == NULL) {
+						IncreasePC();
+						machine->WriteRegister(2, -1);
+						return;
+					}
+
+					// Kiem tra pos co lon hon do dai cua file
+					if(pos > openFileList[id]->Length()) {
+						IncreasePC();
+						machine->WriteRegister(2, -1);
+						return;
+					}
+					// Kiem tra neu goi ham seek tren console IO
+					if(id == 0 || id == 1) {
+						IncreasePC();
+						machine->WriteRegister(2, -1);
+						return;
+					}
+					// Kiem tra neu pos = -1 thi chuyen toi cuoi file
+					if(pos == -1) {
+						int lastByte = openFileList[id]->Length();
+						openFileList[id]->Seek(lastByte);
+						IncreasePC();
+						machine->WriteRegister(2, lastByte);
+						return;
+					}
+
+					// Truong hop binh thuong
+					openFileList[id]->Seek(pos);
+					IncreasePC();
+					machine->WriteRegister(2, openFileList[id]->CurrentPos());
+					return;
+				}
 				//case Other:
 			}
 			break;
