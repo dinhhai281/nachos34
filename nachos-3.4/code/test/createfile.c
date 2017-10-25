@@ -4,13 +4,11 @@
 #define maxlen 32
 
 int main() {
-	int len;
-	char fileName[maxlen + 1];
-
-	if(Create("text.txt") == -1) {
-		PrintStr("\nFailed on creating file\n");
-	} else {
-		PrintStr("\nSuccess\n");
-	}
+	const int MAX_FILE_NAME_SIZE = 260;
+	char fileName[MAX_FILE_NAME_SIZE];
+	// Yeu cau nguoi dung nhap ten file
+	Read(fileName, MAX_FILE_NAME_SIZE, 0);
+	Create(fileName);
 	Halt();
+	return;
 }
