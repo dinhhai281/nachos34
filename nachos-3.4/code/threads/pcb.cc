@@ -78,15 +78,11 @@ void PCB::ExitRelease() {
 }
 
 void PCB::IncNumWait() {
-	mutex->P();
 	numwait++;
-	mutex->V();
 }
 
 void PCB::DecNumWait() {
-	mutex->P();
 	numwait--;
-	mutex->V();
 }
 
 void PCB::SetExitCode(int ec) {

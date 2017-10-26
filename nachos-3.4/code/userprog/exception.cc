@@ -409,6 +409,7 @@ void ExceptionHandler(ExceptionType which) {
 					id = machine->ReadRegister(4);
 					int result = pTab->JoinUpdate(id);
 					machine->WriteRegister(2, result);
+					//IncreasePC();
 				}
 				break;
 				case SC_Exit:
@@ -417,6 +418,7 @@ void ExceptionHandler(ExceptionType which) {
 					exitStatus = machine->ReadRegister(4);
 					int result = pTab->ExitUpdate(exitStatus);
 					machine->WriteRegister(2, result);
+					//IncreasePC();
 				}	
 				break;
 				//case Other:

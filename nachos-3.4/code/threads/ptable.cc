@@ -91,7 +91,7 @@ int PTable::ExitUpdate(int ec) {
 	pcb[pcb[id]->GetParentID()]->DecNumWait();
 	pcb[id]->JoinRelease();
 	pcb[id]->ExitWait();
-	//this->Remove(id);
+	this->Remove(id);
 
 	return ec;
 }
@@ -110,9 +110,7 @@ int PTable::JoinUpdate(int id) {
 	}
 	// tang numwait cho tien trinh cha de tien trinh cha phai doi den khi tien trinh con ket thuc thi moi thuc hien tiep
 	//int parentID = pcb[pcb[id]->GetParentID()];
-	bmsem->P();
 	pcb[pcb[id]->GetParentID()]->IncNumWait();
-	bmsem->V();
 	pcb[id]->JoinWait();
 	int ec = pcb[id]->GetExitCode();
 
@@ -131,6 +129,7 @@ bool PTable::IsExist(int pID) {
 }
 
 void PTable::Remove(int pID) {
+	bmsem->P();
 	bm->Clear(pID);
 	delete pcb[pID];
 	pcb[pID] = NULL;
