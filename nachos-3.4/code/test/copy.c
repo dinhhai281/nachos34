@@ -35,6 +35,8 @@ int main() {
 	desId = Open(des, 0);
 	// Ghi noi dung
 	desSize = Write(buffer, BUFFER_SIZE, desId);
+	Close(desId);
+	Close(srcId);
 
 
 	Halt();
