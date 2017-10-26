@@ -14,6 +14,24 @@
 #include "addrspace.h"
 #include "synch.h"
 
+void StartProcess_2(int id) {
+    AddrSpace* space;
+    char* filename = pTab->GetName(id);
+    space = new AddrSpace(filename);
+    if(!space) {
+        printf("SPACE\n");
+        return;
+    }
+    //pTab->GetThread(id)->thread->space = space;
+    currentThread->space = space;
+
+    space->InitRegisters();
+    space->RestoreState();
+    machine->Run();
+    ASSERT(FALSE);
+    
+}
+
 //----------------------------------------------------------------------
 // StartProcess
 // 	Run a user program.  Open the executable, load it into

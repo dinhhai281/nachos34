@@ -279,7 +279,7 @@ void ExceptionHandler(ExceptionType which) {
 						machine->System2User(virtAddr, num, buffer);
 						IncreasePC();
 						machine->WriteRegister(2, num);
-						delete buffer;
+						delete []buffer;
 						return;
 
 
@@ -302,7 +302,7 @@ void ExceptionHandler(ExceptionType which) {
 						int num = gSynchConsole->Write(buffer, size);
 						IncreasePC();
 						machine->WriteRegister(2, num);
-						delete buffer;
+						delete []buffer;
 						return;
 					}
 					if(id == STDIN)  { // Khong the Write vao STDIN
@@ -380,8 +380,45 @@ void ExceptionHandler(ExceptionType which) {
 					openFileList[id]->Seek(pos);
 					IncreasePC();
 					machine->WriteRegister(2, openFileList[id]->CurrentPos());
-					return;
 				}
+				break;
+				case SC_Exec:
+				{
+					
+
+					int virtAddr;
+					char* filename;
+
+					virtAddr = machine->ReadRegister(4);
+					filename = machine->User2System(virtAddr, 100);
+					if(filename == NULL) {
+						printf("\nKhong mo duoc file\n");
+						IncreasePC();
+						machine->WriteRegister(2, -1);
+						return;
+					}
+					int result = pTab->ExecUpdate(filename);
+					machine->WriteRegister(2, result);
+					delete []filename;
+					IncreasePC();
+				}
+				break;
+				case SC_Join:
+				{	
+					int id;
+					id = machine->ReadRegister(4);
+					int result = pTab->JoinUpdate(id);
+					machine->WriteRegister(2, result);
+				}
+				break;
+				case SC_Exit:
+				{
+					int exitStatus;
+					exitStatus = machine->ReadRegister(4);
+					int result = pTab->ExitUpdate(exitStatus);
+					machine->WriteRegister(2, result);
+				}	
+				break;
 				//case Other:
 			}
 			break;

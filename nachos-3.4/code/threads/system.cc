@@ -17,6 +17,9 @@ Scheduler *scheduler;			// the ready list
 Interrupt *interrupt;			// interrupt status
 Statistics *stats;			// performance metrics
 Timer *timer;				// the hardware timer device,
+BitMap* gPhysPageBitMap;
+Lock* addrLock;
+PTable* pTab;
 					// for invoking context switches
 #define FILE_LIMIT 10
 #define STDIN       0
@@ -150,12 +153,16 @@ Initialize(int argc, char **argv)
     currentThread = new Thread("main");		
     currentThread->setStatus(RUNNING);
 
+
     interrupt->Enable();
     CallOnUserAbort(Cleanup);			// if user hits ctl-C
     
 #ifdef USER_PROGRAM
     machine = new Machine(debugUserProg);	// this must come first
     gSynchConsole = new SynchConsole();
+    gPhysPageBitMap = new BitMap(128);
+    addrLock = new Lock("addrLock");
+    pTab = new PTable(10);
 #endif
 
 #ifdef FILESYS
@@ -214,6 +221,9 @@ Cleanup()
     delete timer;
     delete scheduler;
     delete interrupt;
+    delete gPhysPageBitMap;
+    delete addrLock;
+    delete pTab;
     
     Exit(0);
 }
