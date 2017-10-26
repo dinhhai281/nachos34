@@ -194,7 +194,7 @@ void ExceptionHandler(ExceptionType which) {
 						IncreasePC();
 						machine->WriteRegister(2, fileIndex);
 					} else {
-						printf("Failed to open file\n");
+						printf("\n File's not exsist.");
 						IncreasePC();
 						machine->WriteRegister(2, -1);
 					}
@@ -217,6 +217,7 @@ void ExceptionHandler(ExceptionType which) {
 					}
 					if(openFileList[id] != NULL) { // file co dang duoc mo co the dong lai
 						delete openFileList[id];
+						openFileList[id] = NULL;
 						IncreasePC();
 						machine->WriteRegister(2, 0);
 						return;
@@ -328,9 +329,8 @@ void ExceptionHandler(ExceptionType which) {
 						while(!(buffer[realSize] == 0 && buffer[realSize + 1] == 0) || realSize == size) {
 							realSize++;
 						}
-
 						// Ghi vao file su dung OpenFile
-						int num = openFileList[id]->Write(buffer, realSize); // Tra ve so byte that su da ghi
+						int num = openFileList[id]->Write(buffer, realSize - 1); // Tra ve so byte that su da ghi
 
 						IncreasePC();
 						machine->WriteRegister(2, num);
