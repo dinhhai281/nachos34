@@ -4,7 +4,7 @@
 #include "thread.h"
 #include "synch.h"
 
-#define MAX_FILE_LENGTH 32
+#define MAX_FILE_LENGTH 64
 
 class PCB
 {
@@ -19,7 +19,6 @@ private:
 	int 		parentID;	//ID cua tien trinh cha
 	
 public:
-	int		JoinStatus;	//Trang thai co Join voi tien trinh nao khong? neu co thi gia tri chinh la ID cua tien trinh ma no Join
 	Thread		*thread;
 	
 	PCB(int id);

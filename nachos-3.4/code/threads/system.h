@@ -18,6 +18,7 @@
 #include "bitmap.h"
 #include "synch.h"
 #include "ptable.h"
+#include "stable.h"
 
 // Initialization and cleanup routines
 extern void Initialize(int argc, char **argv); 	// Initialization,
@@ -34,6 +35,7 @@ extern Timer *timer;				// the hardware alarm clock
 extern BitMap* gPhysPageBitMap;
 extern Lock* addrLock;
 extern PTable* pTab;
+extern STable* semTab;
 
 
 

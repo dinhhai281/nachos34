@@ -20,6 +20,7 @@ Timer *timer;				// the hardware timer device,
 BitMap* gPhysPageBitMap;
 Lock* addrLock;
 PTable* pTab;
+STable* semTab;
 					// for invoking context switches
 #define FILE_LIMIT 10
 #define STDIN       0
@@ -163,6 +164,7 @@ Initialize(int argc, char **argv)
     gPhysPageBitMap = new BitMap(128);
     addrLock = new Lock("addrLock");
     pTab = new PTable(10);
+    semTab = new STable(10);
 #endif
 
 #ifdef FILESYS
@@ -224,6 +226,7 @@ Cleanup()
     delete gPhysPageBitMap;
     delete addrLock;
     delete pTab;
+    delete semTab;
     
     Exit(0);
 }

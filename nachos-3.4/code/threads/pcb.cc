@@ -8,13 +8,12 @@ PCB::PCB(int id) {
 	joinsem = new Semaphore("joinsem", 0);
 	exitsem = new Semaphore("exitsem", 0);
 	mutex 	= new Semaphore("mutex", 1);
+
 	exitcode = 0;
 	numwait = 0;
-
 	pid = id;
 	thread = NULL;
 	parentID = currentThread->processID;
-	JoinStatus = 0;
 }
 
 PCB::~PCB() {
@@ -29,7 +28,6 @@ PCB::~PCB() {
 	}
 	if(thread != NULL) {
 		thread->Finish();
-		//delete thread->space;
 		delete thread;
 	}
 }
@@ -78,11 +76,15 @@ void PCB::ExitRelease() {
 }
 
 void PCB::IncNumWait() {
+	mutex->P();
 	numwait++;
+	mutex->V();
 }
 
 void PCB::DecNumWait() {
+	mutex->P();
 	numwait--;
+	mutex->V();
 }
 
 void PCB::SetExitCode(int ec) {

@@ -384,8 +384,6 @@ void ExceptionHandler(ExceptionType which) {
 				break;
 				case SC_Exec:
 				{
-					
-
 					int virtAddr;
 					char* filename;
 
@@ -409,7 +407,7 @@ void ExceptionHandler(ExceptionType which) {
 					id = machine->ReadRegister(4);
 					int result = pTab->JoinUpdate(id);
 					machine->WriteRegister(2, result);
-					//IncreasePC();
+					//IncreasePC(); // Sua cho nay
 				}
 				break;
 				case SC_Exit:
@@ -418,8 +416,48 @@ void ExceptionHandler(ExceptionType which) {
 					exitStatus = machine->ReadRegister(4);
 					int result = pTab->ExitUpdate(exitStatus);
 					machine->WriteRegister(2, result);
-					//IncreasePC();
+					//IncreasePC(); // Sua cho nay
 				}	
+				break;
+				case SC_CreateSemaphore:
+				{
+					int virtAddr = machine->ReadRegister(4);
+					int semval = machine->ReadRegister(5);
+					char* name = machine->User2System(virtAddr, 100);
+					int rc = semTab->Create(name, semval);
+					if(rc == -1) {
+						printf("SC_CreateSemaphore: semTab->Create() error\n");
+					}
+					machine->WriteRegister(2, rc);
+					delete[] name;
+					IncreasePC();
+				}	
+				break;
+				case SC_Up:
+				{
+					int virtAddr = machine->ReadRegister(4);
+					char* name = machine->User2System(virtAddr, 100);
+					int rc = semTab->Signal(name);
+					if(rc == -1) {
+						printf("SC_Up: Signal error -- %s\n", name);
+					}
+					machine->WriteRegister(2, rc);
+					delete[] name;
+					IncreasePC();
+				}
+				break;
+				case SC_Down:
+				{
+					int virtAddr = machine->ReadRegister(4);
+					char* name = machine->User2System(virtAddr, 100);
+					int rc = semTab->Wait(name);
+					if(rc == -1) {
+						printf("SC_Down: Wait error -- %s\n", name);
+					}
+					machine->WriteRegister(2, rc);
+					delete[] name;
+					IncreasePC();
+				}
 				break;
 				//case Other:
 			}

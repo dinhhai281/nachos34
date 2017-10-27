@@ -31,6 +31,9 @@
 #define SC_Yield	10
 #define SC_PrintStr 11
 #define SC_Seek		12
+#define SC_CreateSemaphore 13
+#define SC_Up 14
+#define SC_Down 15
 
 #ifndef IN_ASM
 
@@ -137,6 +140,12 @@ void Yield();
   *
   */
  int Seek(int position, OpenFileId id);
+
+ int CreateSemaphore(char* name, int semval);
+
+ int Up(char* name);
+
+ int Down(char* name);
 
 #endif /* IN_ASM */
 
